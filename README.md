@@ -1,2 +1,2 @@
-# eoepca-management
-Tools and environment definitions for EOEPCA management and development activities
+# dev-env
+Tools and environment definitions for local EOEPCA development activities
