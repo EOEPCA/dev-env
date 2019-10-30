@@ -1,0 +1,8 @@
+---
+  - name: EOEPCA local development environment
+    hosts: all
+    become: yes
+
+    roles:
+    - geerlingguy.git
+    - geerlingguy.java
