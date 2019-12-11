@@ -7,6 +7,7 @@
     - geerlingguy.git
     - geerlingguy.java
     - reallyenglish.git
+    - gantsign.intellij
 
     vars:
       git_additional_packages:
