@@ -45,33 +45,34 @@ Vagrant.configure("2") do |config|
   # argument is a set of non-required options.
   config.vm.synced_folder ".", "/vagrant"
 
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
-  #
   # View the documentation for the provider you are using for more
   # information on available options.
 
-  # Enable provisioning with a shell script. Additional provisioners such as
-  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
-  # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   apt-get update
-  #   apt-get install -y apache2
-  # SHELL
   config.vm.provision :ansible_local do |ansible|
     ansible.playbook = "provisioning/playbook.yml"
     ansible.galaxy_role_file = "provisioning/requirements.yml"
     ansible.galaxy_roles_path = "/etc/ansible/roles"
     ansible.galaxy_command = "sudo ansible-galaxy install --role-file=%{role_file} --roles-path=%{roles_path} --force"
   end
- 
+  
+  # Section for Graphical Desktop 
+  if ENV['DEV_DESKTOP']
+    config.vm.provider "virtualbox" do |vb|
+	    # Display the VirtualBox GUI when booting the machine
+	    vb.gui = true
+	    # Customize the amount of memory on the VM:
+	    vb.memory = "1024"
+	  end
+	
+	  # Install xfce and virtualbox additions
+	  config.vm.provision "shell", inline: "sudo apt-get install -y xfce4 virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11"
+	  # Permit anyone to start the GUI
+	  config.vm.provision "shell", inline: "sudo sed -i 's/allowed_users=.*$/allowed_users=anybody/' /etc/X11/Xwrapper.config"
+	  # Configure VBox guest tools
+	  config.vm.provision "shell", inline: "sudo VBoxClient --clipboard"
+	  config.vm.provision "shell", inline: "sudo VBoxClient --draganddrop"
+	  config.vm.provision "shell", inline: "sudo VBoxClient --display"
+	  config.vm.provision "shell", inline: "sudo VBoxClient --checkhostversion"
+	  config.vm.provision "shell", inline: "sudo VBoxClient --seamless"
+  end
 end
